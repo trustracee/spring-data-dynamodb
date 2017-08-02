@@ -1,11 +1,11 @@
-/*
- * Copyright 2013 the original author or authors.
+/**
+ * Copyright © 2013 spring-data-dynamodb (https://github.com/derjust/spring-data-dynamodb)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,11 +14,6 @@
  * limitations under the License.
  */
 package org.socialsignin.spring.data.dynamodb.repository.query;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 import org.socialsignin.spring.data.dynamodb.core.DynamoDBOperations;
 import org.socialsignin.spring.data.dynamodb.query.Query;
@@ -32,8 +27,14 @@ import org.springframework.data.repository.query.Parameters;
 import org.springframework.data.repository.query.ParametersParameterAccessor;
 import org.springframework.data.repository.query.RepositoryQuery;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 /**
  * @author Michael Lavelle
+ * @author Sebastian Just
  */
 public abstract class AbstractDynamoDBQuery<T, ID extends Serializable> implements RepositoryQuery {
 
@@ -65,8 +66,9 @@ public abstract class AbstractDynamoDBQuery<T, ID extends Serializable> implemen
 	}
 
 	protected abstract Query<T> doCreateQuery(Object[] values);
-	protected abstract Query<Long> doCreateCountQuery(Object[] values,boolean pageQuery);
+	protected abstract Query<Long> doCreateCountQuery(Object[] values, boolean pageQuery);
 	protected abstract boolean isCountQuery();
+	protected abstract boolean isExistsQuery();
 	
 	protected abstract Integer getResultsRestrictionIfApplicable();
 	protected abstract boolean isSingleEntityResultsRestriction();
@@ -78,7 +80,7 @@ public abstract class AbstractDynamoDBQuery<T, ID extends Serializable> implemen
 		return query;
 	}
 	
-	protected Query<Long> doCreateCountQueryWithPermissions(Object values[],boolean pageQuery) {
+	protected Query<Long> doCreateCountQueryWithPermissions(Object values[], boolean pageQuery) {
 		Query<Long> query = doCreateCountQuery(values,pageQuery);
 		query.setScanCountEnabled(method.isScanCountEnabled());
 		return query;
@@ -250,10 +252,17 @@ public abstract class AbstractDynamoDBQuery<T, ID extends Serializable> implemen
 			{
 				return dynamoDBQuery.doCreateCountQueryWithPermissions(values,false).getSingleResult();
 			}
-			else
-			{
-				return dynamoDBQuery.doCreateQueryWithPermissions(values).getSingleResult();
-			}
+            else
+            {
+                if (isExistsQuery())
+                {
+                    return !dynamoDBQuery.doCreateQueryWithPermissions(values).getResultList().isEmpty();
+                }
+                else
+                {
+                    return dynamoDBQuery.doCreateQueryWithPermissions(values).getSingleResult();
+                }
+            }
 
 		}
 	}

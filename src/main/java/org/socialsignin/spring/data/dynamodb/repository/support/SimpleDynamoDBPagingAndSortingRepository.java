@@ -1,11 +1,11 @@
-/*
- * Copyright 2013 the original author or authors.
+/**
+ * Copyright © 2013 spring-data-dynamodb (https://github.com/derjust/spring-data-dynamodb)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,11 +15,8 @@
  */
 package org.socialsignin.spring.data.dynamodb.repository.support;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
+import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedScanList;
 import org.socialsignin.spring.data.dynamodb.core.DynamoDBOperations;
 import org.socialsignin.spring.data.dynamodb.repository.DynamoDBPagingAndSortingRepository;
 import org.springframework.data.domain.Page;
@@ -28,9 +25,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.util.Assert;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
-import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedScanList;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
+import static org.socialsignin.spring.data.dynamodb.utils.SortHandler.ensureNoSort;
+import static org.socialsignin.spring.data.dynamodb.utils.SortHandler.throwUnsupportedSortOperationException;
 /**
  * Default implementation of the
  * {@link org.springframework.data.repository.PagingAndSortingRepository}
@@ -48,6 +49,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedScanList;
  * 
  * 
  * @author Michael Lavelle
+ * @author Sebastian Just
  * 
  * @param <T>
  *            the type of the entity to handle
@@ -66,15 +68,13 @@ public class SimpleDynamoDBPagingAndSortingRepository<T, ID extends Serializable
 
 	@Override
 	public Iterable<T> findAll(Sort sort) {
-		throw new UnsupportedOperationException("Sorting not supported for find all scan operations");
+		return throwUnsupportedSortOperationException();
 	}
 
 	@Override
 	public Page<T> findAll(Pageable pageable) {
 
-		if (pageable.getSort() != null) {
-			throw new UnsupportedOperationException("Sorting not supported for find all scan operations");
-		}
+		ensureNoSort(pageable);
 
 		DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
 		// Scan to the end of the page after the requested page
