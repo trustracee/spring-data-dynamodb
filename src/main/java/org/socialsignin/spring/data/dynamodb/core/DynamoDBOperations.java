@@ -1,8 +1,5 @@
 package org.socialsignin.spring.data.dynamodb.core;
 
-import java.util.List;
-import java.util.Map;
-
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperTableModel;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
@@ -10,6 +7,9 @@ import com.amazonaws.services.dynamodbv2.datamodeling.KeyPair;
 import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedQueryList;
 import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedScanList;
 import com.amazonaws.services.dynamodbv2.model.QueryRequest;
+
+import java.util.List;
+import java.util.Map;
 
 public interface DynamoDBOperations {
 

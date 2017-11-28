@@ -15,18 +15,15 @@
  */
 package org.socialsignin.spring.data.dynamodb.repository.query;
 
-import java.io.Serializable;
-
+import com.amazonaws.services.dynamodbv2.model.ComparisonOperator;
 import org.socialsignin.spring.data.dynamodb.core.DynamoDBOperations;
 import org.socialsignin.spring.data.dynamodb.query.Query;
 import org.springframework.data.domain.Sort;
 
-import com.amazonaws.services.dynamodbv2.model.ComparisonOperator;
-
 /**
  * @author Michael Lavelle
  */
-public interface DynamoDBQueryCriteria<T, ID extends Serializable> {
+public interface DynamoDBQueryCriteria<T, ID> {
 
 	public DynamoDBQueryCriteria<T, ID> withSingleValueCriteria(String propertyName, ComparisonOperator comparisonOperator,
 			Object value, Class<?> type);

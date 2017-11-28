@@ -15,11 +15,6 @@
  */
 package org.socialsignin.spring.data.dynamodb.repository.query;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import org.socialsignin.spring.data.dynamodb.core.DynamoDBOperations;
 import org.socialsignin.spring.data.dynamodb.query.Query;
 import org.springframework.data.domain.Page;
@@ -32,10 +27,14 @@ import org.springframework.data.repository.query.Parameters;
 import org.springframework.data.repository.query.ParametersParameterAccessor;
 import org.springframework.data.repository.query.RepositoryQuery;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 /**
  * @author Michael Lavelle
  */
-public abstract class AbstractDynamoDBQuery<T, ID extends Serializable> implements RepositoryQuery {
+public abstract class AbstractDynamoDBQuery<T, ID> implements RepositoryQuery {
 
 	protected final DynamoDBOperations dynamoDBOperations;
 	private final DynamoDBQueryMethod<T, ID> method;
@@ -85,7 +84,7 @@ public abstract class AbstractDynamoDBQuery<T, ID extends Serializable> implemen
 		return query;
 	}
 
-	private interface QueryExecution<T, ID extends Serializable> {
+	private interface QueryExecution<T, ID> {
 		public Object execute(AbstractDynamoDBQuery<T, ID> query, Object[] values);
 	}
 
@@ -129,7 +128,7 @@ public abstract class AbstractDynamoDBQuery<T, ID extends Serializable> implemen
 			this.parameters = parameters;
 		}
 
-		private int scanThroughResults(Iterator<T> iterator, int resultsToScan) {
+		private int scanThroughResults(Iterator<T> iterator, long resultsToScan) {
 			int processed = 0;
 			while (iterator.hasNext() && processed < resultsToScan) {
 				iterator.next();
@@ -195,7 +194,7 @@ public abstract class AbstractDynamoDBQuery<T, ID extends Serializable> implemen
 			this.parameters = parameters;
 		}
 
-		private int scanThroughResults(Iterator<T> iterator, int resultsToScan) {
+		private int scanThroughResults(Iterator<T> iterator, long resultsToScan) {
 			int processed = 0;
 			while (iterator.hasNext() && processed < resultsToScan) {
 				iterator.next();

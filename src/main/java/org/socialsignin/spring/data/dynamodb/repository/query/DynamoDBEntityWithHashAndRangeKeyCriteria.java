@@ -15,16 +15,12 @@
  */
 package org.socialsignin.spring.data.dynamodb.repository.query;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperTableModel;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
+import com.amazonaws.services.dynamodbv2.model.ComparisonOperator;
+import com.amazonaws.services.dynamodbv2.model.Condition;
+import com.amazonaws.services.dynamodbv2.model.QueryRequest;
 import org.socialsignin.spring.data.dynamodb.core.DynamoDBOperations;
 import org.socialsignin.spring.data.dynamodb.query.CountByHashAndRangeKeyQuery;
 import org.socialsignin.spring.data.dynamodb.query.MultipleEntityQueryExpressionQuery;
@@ -38,17 +34,19 @@ import org.socialsignin.spring.data.dynamodb.query.SingleEntityLoadByHashAndRang
 import org.socialsignin.spring.data.dynamodb.repository.support.DynamoDBIdIsHashAndRangeKeyEntityInformation;
 import org.springframework.util.Assert;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperTableModel;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
-import com.amazonaws.services.dynamodbv2.model.ComparisonOperator;
-import com.amazonaws.services.dynamodbv2.model.Condition;
-import com.amazonaws.services.dynamodbv2.model.QueryRequest;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 /**
  * @author Michael Lavelle
  */
-public class DynamoDBEntityWithHashAndRangeKeyCriteria<T, ID extends Serializable> extends AbstractDynamoDBQueryCriteria<T, ID> {
+public class DynamoDBEntityWithHashAndRangeKeyCriteria<T, ID> extends AbstractDynamoDBQueryCriteria<T, ID> {
 
 	private Object rangeKeyAttributeValue;
 	private Object rangeKeyPropertyValue;
@@ -332,9 +330,8 @@ public class DynamoDBEntityWithHashAndRangeKeyCriteria<T, ID extends Serializabl
 
 	public DynamoDBScanExpression buildScanExpression() {
 
-		if (sort != null) {
-			throw new UnsupportedOperationException("Sort not supported for scan expressions");
-		}
+		ensureNoSort();
+
 		DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
 		if (isHashKeySpecified()) {
 			scanExpression.addFilterCondition(

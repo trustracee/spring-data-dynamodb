@@ -30,6 +30,7 @@ API changes will follow SEMVER and loosly the Spring Framework releases.
 | 4.3.x                           | >= 4.3                         | Gosling-SR1               |
 | 4.4.x                           | >= 4.3                         | Hopper-SR2                |
 | 4.5.x                           | >= 4.3                         | Ingalls                   |
+| 4.6.x                           | >= 4.3                         | Kay-SR1                   |
 
 `spring-data-dynamodb` depends directly on `spring-data` as also `spring-context`, `spring-data` and `spring-tx`.
 
