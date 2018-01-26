@@ -28,6 +28,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.time.Instant;
 import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -51,7 +52,11 @@ public class RepositoryFindTest {
 
     @Test
     public void testFindAll() {
-        List<User> actual = userRepository.findAllByOrderByName();
+        //List<User> actual1 = userRepository.findByLeaveDate(Instant.now());
+
+        List<User> actual3 = userRepository.findByNameOrderByNameAsc("x");
+
+//        List<User> actual = userRepository.findAllByOrderByName();
     }
 }
 
